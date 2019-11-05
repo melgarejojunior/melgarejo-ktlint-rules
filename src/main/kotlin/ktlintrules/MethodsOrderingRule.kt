@@ -2,6 +2,7 @@ package ktlintrules
 
 import com.pinterest.ktlint.core.Rule
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -14,11 +15,20 @@ class MethodsOrderingRule : Rule("methods-ordering-rule") {
     ) {
         if (node.elementType == KtStubElementTypes.CLASS) {
             (node.psi as? KtClass)?.body?.declarations?.filterIsInstance<KtNamedFunction>()?.run {
-                val originalMappedModifiers = map { modifiersOrder(it.modifierList?.firstChild?.text) }
+                val originalMappedModifiers = map { function ->
+                    modifiersOrder(resolveFunctionModifier(function))
+                }
                 if (originalMappedModifiers != originalMappedModifiers.sorted()) {
                     emit(node.startOffset, "Methods are in the wrong order", false)
                 }
             }
+        }
+    }
+
+    private fun resolveFunctionModifier(function: KtNamedFunction): String? {
+        return function.modifierList?.run {
+            if (children.isNotEmpty()) children?.firstOrNull { it !is KtAnnotationEntry }?.text
+            else firstChild?.text
         }
     }
 

@@ -27,7 +27,7 @@ class MethodsOrderingRule : Rule("methods-ordering-rule") {
 
     private fun resolveFunctionModifier(function: KtNamedFunction): String? {
         return function.modifierList?.run {
-            if (children.isNotEmpty()) children?.firstOrNull { it !is KtAnnotationEntry }?.text
+            if (children.isNotEmpty()) children.firstOrNull { it !is KtAnnotationEntry }?.text
             else firstChild?.text
         }
     }

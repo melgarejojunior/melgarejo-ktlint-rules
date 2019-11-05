@@ -1,0 +1,49 @@
+buildscript {
+    ext.kotlin_version = '1.3.50'
+    ext.kotlinVersion = "1.3.31"
+    ext.ktlintVersion = "0.33.0"
+    ext.detektVersion = "1.0.0-RC14"
+
+    repositories {
+        mavenCentral()
+        google()
+        gradlePluginPortal()
+        jcenter()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.21.0"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: "com.github.ben-manes.versions"
+
+wrapper {
+    gradleVersion = "4.10.2"
+    distributionType = Wrapper.DistributionType.ALL
+}
+apply plugin: "kotlin"
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compileOnly "com.pinterest.ktlint:ktlint-core:$ktlintVersion"
+    testCompile "com.pinterest.ktlint:ktlint-core:$ktlintVersion"
+    testCompile "com.pinterest.ktlint:ktlint-test:$ktlintVersion"
+    testCompile "junit:junit:4.12"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+}
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}

@@ -113,4 +113,90 @@ class MethodsOrderingRuleTest {
                 )
         ).isEmpty()
     }
+
+    @Test
+    fun internalMethodTestRule() {
+        Assertions.assertThat(
+                MethodsOrderingRule().lint("""
+           class TrainingDashboardViewModel @Inject constructor() : BaseViewModel() {
+
+    val date: LiveData<Date> get() = dateLiveData
+    val datePicked: LiveData<Event<Calendar>> get() = datePickedLiveData
+
+    private val dateLiveData: MutableLiveData<Date> = MutableLiveData()
+    private val datePickedLiveData: MutableLiveData<Event<Calendar>> = MutableLiveData()
+
+    private var localDate: Date = Date()
+    private var localDatePicked: Calendar = Calendar.getInstance()
+
+    internal fun onNextDayClicked() {
+        dateLiveData.value = localDate.addDays(1)
+    }
+
+    internal fun onPreviousDayClicked() {
+        dateLiveData.value = localDate.backDays(1)
+    }
+
+    internal fun onDiaryClicked() {
+        datePickedLiveData.value = Event(localDatePicked)
+    }
+
+    internal fun onDateChosen() {
+        localDate = localDatePicked.time
+        dateLiveData.value = localDate
+    }
+
+    private fun onCreate() {
+        dateLiveData.value = localDate
+    }
+}
+        """.trimIndent()
+                )
+        ).isEmpty()
+    }
+
+    @Test
+    fun publicInternalProtectedTestRule() {
+        Assertions.assertThat(
+                MethodsOrderingRule().lint("""
+           class PublicInternalProtected  {
+
+    fun onNextDayClicked() {
+        dateLiveData.value = localDate.addDays(1)
+    }
+
+    internal fun onPreviousDayClicked() {
+        dateLiveData.value = localDate.backDays(1)
+    }
+
+    protected fun onDiaryClicked() {
+        datePickedLiveData.value = Event(localDatePicked)
+    }
+}
+        """.trimIndent()
+                )
+        ).isEmpty()
+    }
+
+    @Test
+    fun protectedInternalTestRule() {
+        Assertions.assertThat(
+                MethodsOrderingRule().lint("""
+           class ProtectedInternal  {
+
+    protected fun onNextDayClicked() {
+        dateLiveData.value = localDate.addDays(1)
+    }
+
+    internal fun onPreviousDayClicked() {
+        dateLiveData.value = localDate.backDays(1)
+    }
+}
+        """.trimIndent()
+                )
+        ).containsExactly(
+                LintError(1, 12, "methods-ordering-rule",
+                        "Methods are in the wrong order")
+        )
+    }
 }

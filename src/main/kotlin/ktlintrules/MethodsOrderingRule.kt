@@ -36,17 +36,19 @@ class MethodsOrderingRule : Rule("methods-ordering-rule") {
         return when (text) {
             Modifiers.OVERRIDE -> 0
             Modifiers.PUBLIC -> 1
-            Modifiers.PROTECTED -> 2
-            Modifiers.OPEN -> 3
-            Modifiers.ABSTRACT -> 4
-            Modifiers.PRIVATE -> 5
-            Modifiers.INLINE -> 6
+            Modifiers.INTERNAL -> 2
+            Modifiers.PROTECTED -> 3
+            Modifiers.OPEN -> 4
+            Modifiers.ABSTRACT -> 5
+            Modifiers.PRIVATE -> 6
+            Modifiers.INLINE -> 7
             else -> Int.MAX_VALUE
         }
     }
 
     object Modifiers {
         val PUBLIC = null
+        const val INTERNAL = "internal"
         const val OVERRIDE = "override"
         const val PROTECTED = "protected"
         const val OPEN = "open"

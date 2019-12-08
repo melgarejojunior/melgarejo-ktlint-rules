@@ -57,7 +57,7 @@ class MethodsOrderingRuleTest {
     }
 
     @Test
-    fun annotatedMethodsOrderRule() {
+    fun annotatedMethodsOrderRuleInternalAfterPublic() {
         Assertions.assertThat(
                 MethodsOrderingRule().lint("""
            class LogInTest {
@@ -69,13 +69,6 @@ class MethodsOrderingRuleTest {
     var coroutinesTestRule = CoroutinesTestRule()
 
     private lateinit var logIn: LogIn
-
-    @Before
-    fun setup() {
-        coroutinesTestRule.testDispatcher.runBlockingTest {
-            logIn = LogIn(returnMockedRepository())
-        }
-    }
 
     @ExperimentalCoroutinesApi
     @Test
@@ -100,6 +93,13 @@ class MethodsOrderingRuleTest {
                     assert(e is InvalidFieldsException)
                 }
             }
+        }
+    }
+    
+    @Before
+    internal fun setup() {
+        coroutinesTestRule.testDispatcher.runBlockingTest {
+            logIn = LogIn(returnMockedRepository())
         }
     }
 
@@ -146,6 +146,7 @@ class MethodsOrderingRuleTest {
         dateLiveData.value = localDate
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     private fun onCreate() {
         dateLiveData.value = localDate
     }

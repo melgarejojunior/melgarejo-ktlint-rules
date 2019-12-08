@@ -2,10 +2,14 @@ package ktlintrules
 
 import com.pinterest.ktlint.core.Rule
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.psiUtil.isPublic
+import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeFirstWord
 
 class MethodsOrderingRule : Rule("methods-ordering-rule") {
     override fun visit(
@@ -16,44 +20,39 @@ class MethodsOrderingRule : Rule("methods-ordering-rule") {
         if (node.elementType == KtStubElementTypes.CLASS) {
             (node.psi as? KtClass)?.body?.declarations?.filterIsInstance<KtNamedFunction>()?.run {
                 val originalMappedModifiers = map { function ->
-                    modifiersOrder(resolveFunctionModifier(function))
+                    resolveFunctionModifier(function)
                 }
-                if (originalMappedModifiers != originalMappedModifiers.sorted()) {
+                if (originalMappedModifiers != originalMappedModifiers.sortedBy { it }) {
                     emit(node.startOffset, "Methods are in the wrong order", false)
                 }
             }
         }
     }
 
-    private fun resolveFunctionModifier(function: KtNamedFunction): String? {
-        return function.modifierList?.run {
-            if (children.isNotEmpty()) children?.firstOrNull { it !is KtAnnotationEntry }?.text
-            else firstChild?.text
-        }
-    }
-
-    private fun modifiersOrder(text: String?): Int {
-        return when (text) {
-            Modifiers.OVERRIDE -> 0
-            Modifiers.PUBLIC -> 1
-            Modifiers.INTERNAL -> 2
-            Modifiers.PROTECTED -> 3
-            Modifiers.OPEN -> 4
-            Modifiers.ABSTRACT -> 5
-            Modifiers.PRIVATE -> 6
-            Modifiers.INLINE -> 7
-            else -> Int.MAX_VALUE
+    private fun resolveFunctionModifier(function: KtNamedFunction): Int {
+        return with(function) {
+            when {
+                isPublic -> Modifiers.PUBLIC
+                hasModifier(KtTokens.OVERRIDE_KEYWORD) -> Modifiers.OVERRIDE
+                hasModifier(KtTokens.INTERNAL_KEYWORD) -> Modifiers.INTERNAL
+                hasModifier(KtTokens.PROTECTED_KEYWORD) -> Modifiers.PROTECTED
+                hasModifier(KtTokens.OPEN_KEYWORD) -> Modifiers.OPEN
+                hasModifier(KtTokens.ABSTRACT_KEYWORD) -> Modifiers.ABSTRACT
+                hasModifier(KtTokens.PRIVATE_KEYWORD) -> Modifiers.PRIVATE
+                hasModifier(KtTokens.INLINE_KEYWORD) -> Modifiers.INLINE
+                else -> Modifiers.PUBLIC
+            }
         }
     }
 
     object Modifiers {
-        val PUBLIC = null
-        const val INTERNAL = "internal"
-        const val OVERRIDE = "override"
-        const val PROTECTED = "protected"
-        const val OPEN = "open"
-        const val ABSTRACT = "abstract"
-        const val PRIVATE = "private"
-        const val INLINE = "inline"
+        const val PUBLIC = 0
+        const val INTERNAL = 1
+        const val OVERRIDE = 2
+        const val PROTECTED = 3
+        const val OPEN = 4
+        const val ABSTRACT = 5
+        const val PRIVATE = 6
+        const val INLINE = 7
     }
 }

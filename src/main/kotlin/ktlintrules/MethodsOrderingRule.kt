@@ -21,7 +21,7 @@ class MethodsOrderingRule : Rule("methods-ordering-rule") {
                     resolveFunctionModifier(function)
                 }
                 if (originalMappedModifiers != originalMappedModifiers.sortedBy { it }) {
-                    emit(node.startOffset, "Methods are in the wrong order, the right one, should be:" +
+                    emit(node.startOffset, "Methods are in the wrong order, the right one, should be:\n" +
                             "PUBLIC\n" +
                             "INTERNAL\n" +
                             "OVERRIDE\n" +
@@ -29,7 +29,7 @@ class MethodsOrderingRule : Rule("methods-ordering-rule") {
                             "OPEN\n" +
                             "ABSTRACT\n" +
                             "PRIVATE\n" +
-                            "INLINE", false)
+                            "INLINE\n", false)
                 }
             }
         }

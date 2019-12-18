@@ -1,8 +1,7 @@
-package ktlint
+package ktlintrules
 
 import com.pinterest.ktlint.core.LintError
 import com.pinterest.ktlint.test.lint
-import ktlintrules.MethodsOrderingRule
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
@@ -27,8 +26,8 @@ class MethodsOrderingRuleTest {
             }
         """.trimIndent()
         )).containsExactly(
-                LintError(1, 1, MethodsOrderingRule.ERROR_ID,
-                        MethodsOrderingRule.ERROR_MESSAGE)
+                LintError(1, 1, MethodsOrderingRule.RULE_ID,
+                        MethodsOrderingRule.RULE_DESCRIPTION)
         )
     }
 
@@ -196,8 +195,8 @@ class MethodsOrderingRuleTest {
         """.trimIndent()
                 )
         ).containsExactly(
-                LintError(1, 12, MethodsOrderingRule.ERROR_ID,
-                        MethodsOrderingRule.ERROR_MESSAGE)
+                LintError(1, 12, MethodsOrderingRule.RULE_ID,
+                        MethodsOrderingRule.RULE_DESCRIPTION)
         )
     }
 }

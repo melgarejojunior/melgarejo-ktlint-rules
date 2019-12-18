@@ -2,13 +2,19 @@ package ktlintrules
 
 import com.pinterest.ktlint.core.Rule
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.lexer.KtTokens.ABSTRACT_KEYWORD
+import org.jetbrains.kotlin.lexer.KtTokens.INLINE_KEYWORD
+import org.jetbrains.kotlin.lexer.KtTokens.INTERNAL_KEYWORD
+import org.jetbrains.kotlin.lexer.KtTokens.OPEN_KEYWORD
+import org.jetbrains.kotlin.lexer.KtTokens.OVERRIDE_KEYWORD
+import org.jetbrains.kotlin.lexer.KtTokens.PRIVATE_KEYWORD
+import org.jetbrains.kotlin.lexer.KtTokens.PROTECTED_KEYWORD
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.isPublic
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-class MethodsOrderingRule : Rule(ERROR_ID) {
+class MethodsOrderingRule : Rule(RULE_ID) {
     override fun visit(
         node: ASTNode,
         autoCorrect: Boolean,
@@ -21,7 +27,7 @@ class MethodsOrderingRule : Rule(ERROR_ID) {
                     resolveFunctionModifier(function)
                 }
                 if (originalMappedModifiers != originalMappedModifiers.sortedBy { it }) {
-                    emit(node.startOffset, ERROR_MESSAGE, false)
+                    emit(node.startOffset, RULE_DESCRIPTION, false)
                 }
             }
         }
@@ -44,8 +50,8 @@ class MethodsOrderingRule : Rule(ERROR_ID) {
     }
 
     companion object {
-        const val ERROR_ID = "methods-ordering-rule"
-        const val ERROR_MESSAGE: String = "Methods are in the wrong order, the right one, should be:\n" +
+        const val RULE_ID = "methods-ordering-rule"
+        const val RULE_DESCRIPTION: String = "Methods are in the wrong order, the right one, should be:\n" +
             "PUBLIC\n" +
             "INTERNAL\n" +
             "OVERRIDE\n" +

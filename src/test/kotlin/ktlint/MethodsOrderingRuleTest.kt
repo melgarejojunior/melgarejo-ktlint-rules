@@ -27,8 +27,8 @@ class MethodsOrderingRuleTest {
             }
         """.trimIndent()
         )).containsExactly(
-                LintError(1, 1, "methods-ordering-rule",
-                        "Methods are in the wrong order")
+                LintError(1, 1, MethodsOrderingRule.ERROR_ID,
+                        MethodsOrderingRule.ERROR_MESSAGE)
         )
     }
 
@@ -196,8 +196,8 @@ class MethodsOrderingRuleTest {
         """.trimIndent()
                 )
         ).containsExactly(
-                LintError(1, 12, "methods-ordering-rule",
-                        "Methods are in the wrong order")
+                LintError(1, 12, MethodsOrderingRule.ERROR_ID,
+                        MethodsOrderingRule.ERROR_MESSAGE)
         )
     }
 }

@@ -8,11 +8,11 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.isPublic
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-class MethodsOrderingRule : Rule("methods-ordering-rule") {
+class MethodsOrderingRule : Rule(ERROR_ID) {
     override fun visit(
-            node: ASTNode,
-            autoCorrect: Boolean,
-            emit: (offset: Int, errorMessage: String, canBeAutoCorrected: Boolean) -> Unit
+        node: ASTNode,
+        autoCorrect: Boolean,
+        emit: (offset: Int, errorMessage: String, canBeAutoCorrected: Boolean) -> Unit
     ) {
 
         if (node.elementType == KtStubElementTypes.CLASS) {
@@ -21,15 +21,7 @@ class MethodsOrderingRule : Rule("methods-ordering-rule") {
                     resolveFunctionModifier(function)
                 }
                 if (originalMappedModifiers != originalMappedModifiers.sortedBy { it }) {
-                    emit(node.startOffset, "Methods are in the wrong order, the right one, should be:\n" +
-                            "PUBLIC\n" +
-                            "INTERNAL\n" +
-                            "OVERRIDE\n" +
-                            "PROTECTED\n" +
-                            "OPEN\n" +
-                            "ABSTRACT\n" +
-                            "PRIVATE\n" +
-                            "INLINE\n", false)
+                    emit(node.startOffset, ERROR_MESSAGE, false)
                 }
             }
         }
@@ -49,6 +41,19 @@ class MethodsOrderingRule : Rule("methods-ordering-rule") {
                 else -> Modifiers.PUBLIC
             }
         }
+    }
+
+    companion object {
+        const val ERROR_ID = "methods-ordering-rule"
+        const val ERROR_MESSAGE: String = "Methods are in the wrong order, the right one, should be:\n" +
+            "PUBLIC\n" +
+            "INTERNAL\n" +
+            "OVERRIDE\n" +
+            "PROTECTED\n" +
+            "OPEN\n" +
+            "ABSTRACT\n" +
+            "PRIVATE\n" +
+            "INLINE\n"
     }
 
     object Modifiers {
